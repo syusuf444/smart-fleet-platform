@@ -1,0 +1,12 @@
+<Solution>
+  <Folder Name="/gateway/">
+    <Project Path="gateway/ApiGateway/ApiGateway.csproj" />
+  </Folder>
+  <Folder Name="/services/" />
+  <Folder Name="/services/fleet-service/">
+    <Project Path="services/fleet-service/FleetService.API/FleetService.API.csproj" />
+    <Project Path="services/fleet-service/FleetService.Application/FleetService.Application.csproj" />
+    <Project Path="services/fleet-service/FleetService.Domain/FleetService.Domain.csproj" />
+    <Project Path="services/fleet-service/FleetService.Infrastructure/FleetService.Infrastructure.csproj" />
+  </Folder>
+</Solution>
