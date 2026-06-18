@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/gateway/">
     <Project Path="gateway/ApiGateway/ApiGateway.csproj" />
+    <Project Path="gateway/SmartFleet.Gateway/SmartFleet.Gateway.csproj" />
   </Folder>
   <Folder Name="/services/" />
   <Folder Name="/services/fleet-service/">
@@ -8,5 +9,8 @@
     <Project Path="services/fleet-service/FleetService.Application/FleetService.Application.csproj" />
     <Project Path="services/fleet-service/FleetService.Domain/FleetService.Domain.csproj" />
     <Project Path="services/fleet-service/FleetService.Infrastructure/FleetService.Infrastructure.csproj" />
+  </Folder>
+  <Folder Name="/services/identity-service/">
+    <Project Path="services/identity-service/IdentityService.API/IdentityService.API.csproj" />
   </Folder>
 </Solution>
