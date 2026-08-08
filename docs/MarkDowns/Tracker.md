@@ -69,6 +69,7 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
 - Confirmed Identity and Fleet service ports are reachable through gateway
 - Updated AI Service port from 5090 to 5091 in routes
 - Added missing Dashboard and MaintenanceRecords/FuelRecords routes where needed
+- Validated AI gateway route `/ai/AiAssistant/chat`; AI service is healthy but Azure OpenAI config is missing, so the feature returns a graceful error
 
 **Full Report:** See docs/MarkDowns/IntegrationTestingReport.md
 
