@@ -110,6 +110,13 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
  - Ran `AiService.Tests`: 1 test passed (unit tests) — Success
  - Note: a running `AiService.API` process had been locking build outputs; I terminated PID 17820 and rebuilt cleanly. Consider stopping background instances before local builds.
 
+### API Gateway Routing Fix (2026-08-08)
+
+- Problem: Gateway forwarded AI requests to `http://localhost:5091/api/...` while `AiService` exposes endpoints at `/...` (no `/api` prefix), causing 502 responses.
+- Action: Updated `gateway/ApiGateway/ocelot.json` to use `"DownstreamPathTemplate": "/{everything}"` for the AI route so `/ai/health` forwards to `http://localhost:5091/health`.
+- Result: Restarted ApiGateway and `AiService.API`, then verified `http://localhost:5000/ai/health` returned `200 Healthy`.
+
+
 Notes:
 - Integration Testing Guide: See docs/MarkDowns/IntegrationTestingGuide.md
 - Test Report: See docs/MarkDowns/IntegrationTestingReport.md
