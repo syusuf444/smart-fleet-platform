@@ -116,6 +116,12 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
 - Action: Updated `gateway/ApiGateway/ocelot.json` to use `"DownstreamPathTemplate": "/{everything}"` for the AI route so `/ai/health` forwards to `http://localhost:5091/health`.
 - Result: Restarted ApiGateway and `AiService.API`, then verified `http://localhost:5000/ai/health` returned `200 Healthy`.
 
+### Automated E2E Smoke Tests (2026-08-08)
+
+- Added `scripts/e2e/run-e2e.ps1` and `scripts/e2e/config.json` to perform configurable smoke checks against service endpoints. The script returns non-zero when required checks fail.
+- Added `.github/workflows/e2e.yml` to run the E2E script on a daily schedule or via manual dispatch; set `E2E_BASE_URL` as a repository secret to target deployed environments.
+- Local test: executed the script against the development environment; `AI Gateway Health` and `AI Direct Health` passed, `Fleet Vehicles` returned 401 (optional check). Required checks passed locally.
+
 
 Notes:
 - Integration Testing Guide: See docs/MarkDowns/IntegrationTestingGuide.md

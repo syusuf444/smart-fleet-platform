@@ -1,0 +1,19 @@
+{
+  "endpoints": [
+    {
+      "name": "AI Gateway Health",
+      "url": "http://localhost:5000/ai/health",
+      "required": true
+    },
+    {
+      "name": "AI Direct Health",
+      "url": "http://localhost:5091/health",
+      "required": true
+    },
+    {
+      "name": "Fleet Vehicles (gateway)",
+      "url": "http://localhost:5000/fleet/Vehicles",
+      "required": false
+    }
+  ]
+}
