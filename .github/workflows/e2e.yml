@@ -18,5 +18,7 @@ jobs:
       - name: Run E2E script
         env:
           E2E_BASE_URL: ${{ secrets.E2E_BASE_URL }}
+          E2E_AUTH_EMAIL: ${{ secrets.E2E_AUTH_EMAIL }}
+          E2E_AUTH_PASSWORD: ${{ secrets.E2E_AUTH_PASSWORD }}
         run: |
           pwsh -NoProfile -c ./scripts/e2e/run-e2e.ps1

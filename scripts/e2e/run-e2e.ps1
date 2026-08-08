@@ -13,6 +13,35 @@ if (Test-Path $ConfigPath -PathType Leaf) {
 
 $baseOverride = $Env:E2E_BASE_URL
 
+# Acquire JWT token if auth config provided
+$token = $null
+if ($null -ne $config.auth) {
+    $tokenUrl = $config.auth.tokenUrl
+    $email = $config.auth.email
+    $password = $config.auth.password
+    if (-not $email -and $Env:E2E_AUTH_EMAIL) { $email = $Env:E2E_AUTH_EMAIL }
+    if (-not $password -and $Env:E2E_AUTH_PASSWORD) { $password = $Env:E2E_AUTH_PASSWORD }
+    $headerName = if ($config.auth.headerName) { $config.auth.headerName } else { 'Authorization' }
+    $headerPrefix = if ($config.auth.headerPrefix) { $config.auth.headerPrefix } else { 'Bearer ' }
+
+    if ($email -and $password) {
+        try {
+            $body = @{ Email = $email; Password = $password } | ConvertTo-Json
+            $resp = Invoke-RestMethod -Uri $tokenUrl -Method Post -Body $body -ContentType 'application/json' -ErrorAction Stop
+            if ($resp -and $resp.Token) {
+                $token = $resp.Token
+                Write-Output "Acquired JWT token from $tokenUrl"
+            } else {
+                Write-Output "Auth response received but token not found."
+            }
+        } catch {
+            Write-Output "Failed to acquire token: $($_.Exception.Message)"
+        }
+    } else {
+        Write-Output "Auth config present but email/password empty; skipping token acquisition."
+    }
+}
+
 $results = @()
 $allPassed = $true
 
@@ -30,7 +59,26 @@ foreach ($ep in $config.endpoints) {
 
     $start = Get-Date
     try {
-        $resp = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec $TimeoutSec -ErrorAction Stop
+        $headers = @{}
+        if ($ep.PSObject.Properties.Match('auth').Count -gt 0 -and $ep.auth) {
+            if ($token) {
+                $headers[$headerName] = $headerPrefix + $token
+            } else {
+                Write-Output "[SKIP] $($ep.name) requires auth but no token available"
+                $results += [pscustomobject]@{
+                    name = $ep.name
+                    url = $url
+                    status = 0
+                    success = $false
+                    timeMs = 0
+                    error = 'Auth required but token not available'
+                }
+                if ($ep.required) { $allPassed = $false }
+                continue
+            }
+        }
+
+        $resp = Invoke-WebRequest -Uri $url -UseBasicParsing -TimeoutSec $TimeoutSec -Headers $headers -ErrorAction Stop
         $status = $resp.StatusCode
         $success = ($status -ge 200 -and $status -lt 300)
         $elapsed = (Get-Date) - $start

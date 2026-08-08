@@ -121,6 +121,9 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
 - Added `scripts/e2e/run-e2e.ps1` and `scripts/e2e/config.json` to perform configurable smoke checks against service endpoints. The script returns non-zero when required checks fail.
 - Added `.github/workflows/e2e.yml` to run the E2E script on a daily schedule or via manual dispatch; set `E2E_BASE_URL` as a repository secret to target deployed environments.
 - Local test: executed the script against the development environment; `AI Gateway Health` and `AI Direct Health` passed, `Fleet Vehicles` returned 401 (optional check). Required checks passed locally.
+ - Added `scripts/e2e/run-e2e.ps1` and `scripts/e2e/config.json` to perform configurable smoke checks against service endpoints. The script supports JWT acquisition from Identity service when `auth` config is provided or `E2E_AUTH_EMAIL`/`E2E_AUTH_PASSWORD` env vars are set.
+ - Added `.github/workflows/e2e.yml` to run the E2E script on a daily schedule or via manual dispatch; set `E2E_BASE_URL`, `E2E_AUTH_EMAIL`, and `E2E_AUTH_PASSWORD` as repository secrets to target deployed environments and test authenticated endpoints.
+ - Local test: executed the script against the development environment; `AI Gateway Health` and `AI Direct Health` passed, `Fleet Vehicles` skipped because no credentials were provided locally (script exits non-zero if a required auth endpoint lacks token).
 
 
 Notes:

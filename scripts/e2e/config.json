@@ -13,7 +13,16 @@
     {
       "name": "Fleet Vehicles (gateway)",
       "url": "http://localhost:5000/fleet/Vehicles",
-      "required": false
+      "required": true,
+      "auth": true
     }
   ]
+  ,
+  "auth": {
+    "tokenUrl": "http://localhost:5057/api/Auth/login",
+    "email": "",
+    "password": "",
+    "headerName": "Authorization",
+    "headerPrefix": "Bearer "
+  }
 }
