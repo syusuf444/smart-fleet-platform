@@ -1,0 +1,14 @@
+@AiService.API_HostAddress = http://localhost:5091
+
+GET {{AiService.API_HostAddress}}/health
+Accept: application/json
+
+###
+
+POST {{AiService.API_HostAddress}}/api/aiassistant/chat
+Content-Type: application/json
+
+{
+  "message": "Which vehicles require maintenance?",
+  "context": "Fleet data will be provided by upstream services."
+}

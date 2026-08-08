@@ -1,122 +1,67 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import React from 'react';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { ThemeProvider } from '@mui/material/styles';
+import { Provider, useSelector } from 'react-redux';
+import { store } from './store';
+import { theme } from './theme';
+import LoginPage from './features/auth/pages/LoginPage';
+import RegisterPage from './features/auth/pages/RegisterPage';
+import MainLayout from './layouts/MainLayout';
+import DashboardPage from './features/dashboard/pages/DashboardPage';
+import VehicleListPage from './features/vehicles/pages/VehicleListPage';
+import VehicleDetailPage from './features/vehicles/pages/VehicleDetailPage';
+import DriverListPage from './features/drivers/pages/DriverListPage';
+import DriverDetailPage from './features/drivers/pages/DriverDetailPage';
+import MaintenanceDashboardPage from './features/maintenance/pages/MaintenanceDashboardPage';
+import FuelDashboardPage from './features/fuel/pages/FuelDashboardPage';
+import AIAssistantPage from './features/ai-assistant/pages/AIAssistantPage';
+import ProfilePage from './features/profile/pages/ProfilePage';
 
-function App() {
-  const [count, setCount] = useState(0)
+const AuthenticatedLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const userName = useSelector((state: { auth: { userName: string } }) => state.auth.userName);
+  const initials = userName
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? '')
+    .join('') || 'FM';
 
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.tsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <MainLayout userName={userName || 'Fleet Manager'} userInitials={initials}>
+      {children}
+    </MainLayout>
+  );
+};
 
-      <div className="ticks"></div>
+const AppContent: React.FC = () => {
+  const { isAuthenticated } = useSelector((state: { auth: { isAuthenticated: boolean } }) => state.auth);
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+  return (
+    <Routes>
+      <Route path="/login" element={!isAuthenticated ? <LoginPage /> : <Navigate to="/dashboard" />} />
+      <Route path="/register" element={!isAuthenticated ? <RegisterPage /> : <Navigate to="/dashboard" />} />
+      <Route path="/dashboard" element={isAuthenticated ? <AuthenticatedLayout><DashboardPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/vehicles" element={isAuthenticated ? <AuthenticatedLayout><VehicleListPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/vehicles/:id" element={isAuthenticated ? <AuthenticatedLayout><VehicleDetailPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/drivers" element={isAuthenticated ? <AuthenticatedLayout><DriverListPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/drivers/:id" element={isAuthenticated ? <AuthenticatedLayout><DriverDetailPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/maintenance" element={isAuthenticated ? <AuthenticatedLayout><MaintenanceDashboardPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/fuel" element={isAuthenticated ? <AuthenticatedLayout><FuelDashboardPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/ai-assistant" element={isAuthenticated ? <AuthenticatedLayout><AIAssistantPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/profile" element={isAuthenticated ? <AuthenticatedLayout><ProfilePage /></AuthenticatedLayout> : <Navigate to="/login" />} />
+      <Route path="/" element={<Navigate to="/dashboard" />} />
+    </Routes>
+  );
+};
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
-}
+const App: React.FC = () => (
+  <Provider store={store}>
+    <ThemeProvider theme={theme}>
+      <BrowserRouter>
+        <AppContent />
+      </BrowserRouter>
+    </ThemeProvider>
+  </Provider>
+);
 
-export default App
+export default App;

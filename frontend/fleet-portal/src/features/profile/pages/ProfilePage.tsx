@@ -1,0 +1,49 @@
+import React from 'react';
+import { Box, Card, CardContent, Chip, Divider, Typography } from '@mui/material';
+import { AccountCircle, Email, Phone, Shield } from '@mui/icons-material';
+import PageHeader from '../../../components/PageHeader';
+
+const ProfilePage: React.FC = () => (
+  <Box sx={{ display: 'flex', flexDirection: 'column', gap: 3 }}>
+    <PageHeader
+      title="Profile"
+      subtitle="Manage your account preferences and fleet access details."
+    />
+
+    <Card>
+      <CardContent sx={{ display: 'flex', flexDirection: 'column', gap: 2.5 }}>
+        <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 2, alignItems: { xs: 'flex-start', md: 'center' }, justifyContent: 'space-between' }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+            <AccountCircle sx={{ fontSize: 52, color: 'primary.main' }} />
+            <Box>
+              <Typography variant="h3">Fleet Manager</Typography>
+              <Typography variant="body2" color="text.secondary">
+                Operations lead • Smart Fleet Platform
+              </Typography>
+            </Box>
+          </Box>
+          <Chip label="Admin access" color="success" />
+        </Box>
+
+        <Divider />
+
+        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Email color="action" />
+            <Typography variant="body2">manager@smartfleet.example</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Phone color="action" />
+            <Typography variant="body2">+1 (555) 014-2288</Typography>
+          </Box>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
+            <Shield color="action" />
+            <Typography variant="body2">Two-factor authentication enabled</Typography>
+          </Box>
+        </Box>
+      </CardContent>
+    </Card>
+  </Box>
+);
+
+export default ProfilePage;

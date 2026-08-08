@@ -1,10 +1,10 @@
 using System.Text;
 using IdentityService.API.Data;
+using IdentityService.API.Extensions;
 using IdentityService.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -98,6 +98,8 @@ builder.Services.AddAuthentication(
 builder.Services.AddAuthorization();
 
 var app = builder.Build();
+
+app.MigrateAndSeedDatabase();
 
 app.UseSwagger();
 

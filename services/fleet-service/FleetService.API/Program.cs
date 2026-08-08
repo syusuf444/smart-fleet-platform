@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using FleetService.API.Extensions;
 using FleetService.API.Middleware;
 using Serilog;
 
@@ -112,6 +113,8 @@ builder.Services.AddScoped<IFuelRecordRepository, FuelRecordRepository>();
 
 builder.Services.AddScoped<IFuelRecordService, FuelRecordService>();
 
+builder.Services.AddScoped<IDashboardRepository, DashboardRepository>();
+
 // =========================================
 // Kafka
 // =========================================
@@ -162,6 +165,8 @@ builder.Services.AddAuthorization();
 // Build App
 // =========================================
 var app = builder.Build();
+
+app.MigrateAndSeedDatabase();
 
 // =========================================
 // Middleware

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FleetControl - Driver Dashboard</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                            "error-container": "#ffdad6",
+                            "on-secondary": "#ffffff",
+                            "surface-bright": "#faf8ff",
+                            "background": "#faf8ff",
+                            "surface-container-low": "#f3f3fe",
+                            "outline": "#737686",
+                            "secondary-fixed-dim": "#bec6e0",
+                            "on-primary-container": "#eeefff",
+                            "surface-container-highest": "#e1e2ed",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-container": "#ededf9",
+                            "inverse-surface": "#2e3039",
+                            "on-primary-fixed-variant": "#003ea8",
+                            "error": "#ba1a1a",
+                            "on-error": "#ffffff",
+                            "primary-container": "#2563eb",
+                            "on-error-container": "#93000a",
+                            "on-tertiary": "#ffffff",
+                            "on-tertiary-fixed-variant": "#7d2d00",
+                            "on-secondary-container": "#5c647a",
+                            "on-secondary-fixed": "#131b2e",
+                            "tertiary-fixed": "#ffdbcd",
+                            "tertiary": "#943700",
+                            "on-surface": "#191b23",
+                            "primary-fixed": "#dbe1ff",
+                            "secondary-fixed": "#dae2fd",
+                            "inverse-on-surface": "#f0f0fb",
+                            "on-secondary-fixed-variant": "#3f465c",
+                            "on-tertiary-container": "#ffede6",
+                            "inverse-primary": "#b4c5ff",
+                            "surface-variant": "#e1e2ed",
+                            "surface-tint": "#0053db",
+                            "on-primary": "#ffffff",
+                            "primary-fixed-dim": "#b4c5ff",
+                            "on-primary-fixed": "#00174b",
+                            "secondary": "#565e74",
+                            "surface-dim": "#d9d9e5",
+                            "tertiary-fixed-dim": "#ffb596",
+                            "primary": "#004ac6",
+                            "on-background": "#191b23",
+                            "on-tertiary-fixed": "#360f00",
+                            "secondary-container": "#dae2fd",
+                            "surface-container-high": "#e7e7f3",
+                            "tertiary-container": "#bc4800",
+                            "outline-variant": "#c3c6d7",
+                            "surface": "#faf8ff",
+                            "on-surface-variant": "#434655"
+                    },
+                    "borderRadius": {
+                            "DEFAULT": "0.125rem",
+                            "lg": "0.25rem",
+                            "xl": "0.5rem",
+                            "full": "0.75rem"
+                    },
+                    "spacing": {
+                            "margin-desktop": "24px",
+                            "stack-lg": "24px",
+                            "stack-sm": "8px",
+                            "gutter": "16px",
+                            "stack-xs": "4px",
+                            "container-max": "1440px",
+                            "sidebar-width": "260px",
+                            "stack-md": "16px"
+                    },
+                    "fontFamily": {
+                            "body-md": ["Inter"],
+                            "mono-data": ["Inter"],
+                            "body-sm": ["Inter"],
+                            "label-bold": ["Inter"],
+                            "headline-md": ["Inter"],
+                            "body-lg": ["Inter"],
+                            "headline-sm": ["Inter"],
+                            "display": ["Inter"]
+                    },
+                    "fontSize": {
+                            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                            "mono-data": ["13px", {"lineHeight": "18px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                            "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+                            "label-bold": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                            "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                            "headline-sm": ["16px", {"lineHeight": "24px", "fontWeight": "600"}],
+                            "display": ["30px", {"lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+        /* Mobile Specific Overrides for high touch targets */
+        .touch-target { min-height: 48px; min-width: 48px; }
+        
+        /* Material Symbols base styling */
+        .material-symbols-outlined {
+            font-family: 'Material Symbols Outlined';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            line-height: 1;
+            letter-spacing: normal;
+            text-transform: none;
+            display: inline-block;
+            white-space: nowrap;
+            word-wrap: normal;
+            direction: ltr;
+            -webkit-font-feature-settings: 'liga';
+            -webkit-font-smoothing: antialiased;
+        }
+        
+        /* Hide scrollbar for clean mobile look */
+        ::-webkit-scrollbar { display: none; }
+        * { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface font-body-md min-h-screen flex flex-col antialiased">
+<!-- Top App Bar (Mobile optimized variant) -->
+<header class="flex justify-between items-center h-16 px-gutter border-b border-outline-variant bg-surface sticky top-0 z-40 md:hidden">
+<div class="flex items-center gap-stack-sm">
+<img alt="David - Profile Picture" class="w-10 h-10 rounded-full object-cover border border-outline-variant" data-alt="A professional headshot of a delivery driver wearing a high-visibility vest. The lighting is bright and outdoorsy, indicating daytime driving conditions. Corporate modern aesthetic, clean and crisp portrait photography." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCN3TP7_bnkq5YxFQb5EfK3M1s_JX0SJL93GQKaxUB1H0vyzPrpR9lZGefSjy2eDwshNX5WwaegGpK9HzIlVZEuPKtcKp0twrkiEg9ioUSwH4fpZAN-ErCc9ERJuzvmnx7DP1go4b9cTtkQMfZ_Hx8GU_mYVhNVHUcX8WIYHKRsLsvFLoTjPTHLcbQLYG1adXJp_eyIYkNuXPO7xL8ZD5jGbYHOcEBjfE6YjdTqWAMfYsAZwo1_H1osXmsG7056FpoL0prKbVrM8Ss"/>
+<div class="flex flex-col">
+<span class="font-body-sm text-on-surface-variant leading-tight">Good morning,</span>
+<span class="font-headline-sm text-primary leading-tight">David</span>
+</div>
+</div>
+<button class="touch-target flex items-center justify-center relative active:scale-95 duration-150 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-all">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full border border-surface"></span>
+</button>
+</header>
+<!-- Desktop Sidebar Shell Placeholder (Hidden on mobile per rules) -->
+<nav class="hidden md:flex flex-col h-full py-stack-lg fixed left-0 top-0 w-sidebar-width bg-on-secondary-fixed border-r border-outline-variant shadow-sm z-50">
+<!-- Content suppressed for mobile-first intent -->
+</nav>
+<!-- Main Content Canvas -->
+<main class="flex-1 overflow-y-auto pb-24 md:ml-sidebar-width p-gutter flex flex-col gap-stack-lg">
+<!-- Today's Trip Card (High End UI Pattern) -->
+<section class="bg-surface-container-lowest border border-outline-variant rounded-xl shadow-sm overflow-hidden relative">
+<!-- Map Snippet Area -->
+<div class="h-32 bg-surface-container w-full relative overflow-hidden">
+<div class="bg-cover bg-center w-full h-full opacity-80" data-alt="A stylized, simplified mobile map interface showing a delivery route. The map features a clean, corporate modern aesthetic with a soft gray and blue color palette. A bold primary blue line indicates the route from an industrial park to a downtown distribution center. High contrast for clear outdoor visibility." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuA2W0CBbrIsLcFYLL-KFGLHuTiuVGqGYBmXv2RuphR37MeIRPkc0QH2E8ePfIGc5na0vROaVQtQIePx6zeQhOHfxozXYlETsMJxpFAk0dDF5_IwWjGrtZViYPIKPdJxzJPx85e8USV6JwrmxVeXKyHTRleoPnrQTbauYbToRsbkWkhdjWmeEdHCJsyw-gPDJuewVl-f9cWvHubkrBb4M-P5gMWNqT1EfDvDJEFcCW49kszkcpvkaLYTAHzL7uTQCG6Zr4o7Tpa91zE')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest to-transparent"></div>
+<div class="absolute top-3 left-3 bg-primary-container text-on-primary-container font-label-bold px-2 py-1 rounded">ACTIVE ROUTE</div>
+</div>
+<div class="p-stack-md flex flex-col gap-stack-md relative z-10 -mt-6 bg-surface-container-lowest rounded-t-xl">
+<!-- Location Details -->
+<div class="flex flex-col gap-stack-sm border-b border-outline-variant pb-stack-sm">
+<div class="flex items-start gap-stack-sm">
+<div class="flex flex-col items-center mt-1">
+<span class="material-symbols-outlined text-on-surface-variant" style="font-size: 18px; font-variation-settings: 'FILL' 1;">trip_origin</span>
+<div class="w-0.5 h-6 bg-outline-variant my-1"></div>
+</div>
+<div>
+<span class="font-label-bold text-on-surface-variant block">PICKUP (08:00 AM)</span>
+<span class="font-body-md text-on-surface">Central Logistics Hub, Sector 4</span>
+</div>
+</div>
+<div class="flex items-start gap-stack-sm">
+<div class="flex flex-col items-center">
+<span class="material-symbols-outlined text-primary" style="font-size: 18px; font-variation-settings: 'FILL' 1;">location_on</span>
+</div>
+<div>
+<span class="font-label-bold text-on-surface-variant block">DROPOFF (EST. 11:30 AM)</span>
+<span class="font-headline-sm text-on-surface">Downtown Distribution Annex</span>
+</div>
+</div>
+</div>
+<!-- Primary Action Area -->
+<div class="flex gap-stack-sm mt-2">
+<button class="flex-1 bg-primary text-on-primary font-headline-sm rounded-lg py-3 flex items-center justify-center gap-2 active:scale-95 transition-transform shadow-sm">
+<span class="material-symbols-outlined">play_arrow</span>
+                        Start Trip
+                    </button>
+<button class="bg-surface text-on-surface-variant border border-outline-variant font-headline-sm rounded-lg px-6 py-3 flex items-center justify-center active:scale-95 transition-transform">
+                        Stop
+                    </button>
+</div>
+</div>
+</section>
+<!-- Stats Row (Bento Grid Style) -->
+<section class="grid grid-cols-3 gap-stack-sm">
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-sm flex flex-col items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary mb-1">speed</span>
+<span class="font-headline-md text-on-surface">142</span>
+<span class="font-label-bold text-on-surface-variant text-center">MILES DRIVEN</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-sm flex flex-col items-center justify-center shadow-sm relative overflow-hidden">
+<div class="absolute inset-0 bg-surface-tint opacity-5"></div>
+<span class="material-symbols-outlined text-primary mb-1">verified_user</span>
+<span class="font-headline-md text-primary">98</span>
+<span class="font-label-bold text-on-surface-variant text-center">SAFETY SCORE</span>
+</div>
+<div class="bg-surface-container-lowest border border-outline-variant rounded-xl p-stack-sm flex flex-col items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-secondary mb-1">local_gas_station</span>
+<span class="font-headline-md text-on-surface">12<span class="text-sm font-normal">G</span></span>
+<span class="font-label-bold text-on-surface-variant text-center">FUEL USED</span>
+</div>
+</section>
+<!-- Quick Actions List (High Contrast, Touch Friendly) -->
+<section class="flex flex-col gap-stack-sm mt-stack-sm">
+<h2 class="font-label-bold text-on-surface-variant mb-1 uppercase tracking-wider">Quick Actions</h2>
+<button class="touch-target w-full bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low transition-colors rounded-xl p-stack-md flex items-center justify-between shadow-sm active:scale-[0.98]">
+<div class="flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-error-container text-on-error-container flex items-center justify-center">
+<span class="material-symbols-outlined">warning</span>
+</div>
+<span class="font-headline-sm text-on-surface">Report Incident</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<button class="touch-target w-full bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low transition-colors rounded-xl p-stack-md flex items-center justify-between shadow-sm active:scale-[0.98]">
+<div class="flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center">
+<span class="material-symbols-outlined">receipt_long</span>
+</div>
+<span class="font-headline-sm text-on-surface">Submit Fuel Log</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+<button class="touch-target w-full bg-surface-container-lowest border border-outline-variant hover:bg-surface-container-low transition-colors rounded-xl p-stack-md flex items-center justify-between shadow-sm active:scale-[0.98]">
+<div class="flex items-center gap-stack-md">
+<div class="w-10 h-10 rounded-full bg-primary-container text-on-primary-container flex items-center justify-center">
+<span class="material-symbols-outlined">fact_check</span>
+</div>
+<span class="font-headline-sm text-on-surface">Vehicle Inspection</span>
+</div>
+<span class="material-symbols-outlined text-outline">chevron_right</span>
+</button>
+</section>
+</main>
+<!-- Bottom Navigation Shell (Mobile Only) -->
+<!-- Applying Semantic Logic: This is the Home/Dashboard destination -->
+<nav class="md:hidden fixed bottom-0 w-full bg-surface border-t-0 bg-surface shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] pb-safe pt-2 px-2 z-50">
+<ul class="flex justify-around items-center">
+<!-- Active State: Dashboard/Home -->
+<li class="flex-1 flex flex-col items-center justify-center py-2 gap-1 bg-primary-container text-on-primary-container rounded-xl">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">dashboard</span>
+<span class="font-label-bold text-[10px]">Dashboard</span>
+</li>
+<!-- Inactive States -->
+<li class="flex-1 flex flex-col items-center justify-center py-2 gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">map</span>
+<span class="font-label-bold text-[10px]">Trips</span>
+</li>
+<li class="flex-1 flex flex-col items-center justify-center py-2 gap-1 text-on-surface-variant relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="font-label-bold text-[10px]">Alerts</span>
+<div class="absolute top-1 right-[25%] w-2 h-2 bg-error rounded-full"></div>
+</li>
+<li class="flex-1 flex flex-col items-center justify-center py-2 gap-1 text-on-surface-variant">
+<span class="material-symbols-outlined">person</span>
+<span class="font-label-bold text-[10px]">Profile</span>
+</li>
+</ul>
+<!-- Padding for iOS home indicator -->
+<div class="h-4 w-full"></div>
+</nav>
+</body></html>

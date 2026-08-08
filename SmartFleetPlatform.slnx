@@ -13,4 +13,17 @@
   <Folder Name="/services/identity-service/">
     <Project Path="services/identity-service/IdentityService.API/IdentityService.API.csproj" />
   </Folder>
+  <Folder Name="/services/ai-service/">
+    <Project Path="services/ai-service/AiService.API/AiService.API.csproj" />
+    <Project Path="services/ai-service/AiService.Application/AiService.Application.csproj" />
+    <Project Path="services/ai-service/AiService.Domain/AiService.Domain.csproj" />
+    <Project Path="services/ai-service/AiService.Infrastructure/AiService.Infrastructure.csproj" />
+    <Project Path="services/ai-service/AiService.Tests/AiService.Tests.csproj" />
+  </Folder>
+  <Folder Name="/services/notification-service/">
+    <Project Path="services/notification-service/NotificationService.API/NotificationService.API.csproj" />
+    <Project Path="services/notification-service/NotificationService.Domain/NotificationService.Domain.csproj" />
+    <Project Path="services/notification-service/NotificationService.Infrastructure/NotificationService.Infrastructure.csproj" />
+    <Project Path="services/notification-service/NotificationService.Tests/NotificationService.Tests.csproj" />
+  </Folder>
 </Solution>
