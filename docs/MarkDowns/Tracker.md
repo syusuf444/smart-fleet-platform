@@ -106,6 +106,9 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
 - Built `AiService.API` (used alternate output path to avoid locked bin): Success
 - Ran `AiService.Tests`: 1 test passed (unit tests) — Success
 - Note: a running `AiService.API` process was locking files; build used `C:\temp\ai_build` to avoid the lock. Consider stopping background instances before local builds.
+ - Built `AiService.API`: Success (stopped lingering AiService.API process first)
+ - Ran `AiService.Tests`: 1 test passed (unit tests) — Success
+ - Note: a running `AiService.API` process had been locking build outputs; I terminated PID 17820 and rebuilt cleanly. Consider stopping background instances before local builds.
 
 Notes:
 - Integration Testing Guide: See docs/MarkDowns/IntegrationTestingGuide.md
