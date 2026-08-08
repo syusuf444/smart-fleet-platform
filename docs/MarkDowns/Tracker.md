@@ -46,6 +46,8 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
 - [x] Frontend production build validated
 - [x] All microservices started without fatal errors
 - [x] Fleet endpoint `/fleet/Vehicles` validated through gateway
+- [x] Fleet maintenance endpoint `/fleet/MaintenanceRecords` validated through gateway
+- [x] Fleet fuel endpoint `/fleet/FuelRecords` validated through gateway
 
 ### ✅ Gateway Routing Validated
 **API Gateway (Ocelot) - Port 5000**
