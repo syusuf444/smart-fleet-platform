@@ -48,6 +48,8 @@ Completion: Phase 1 (Testing) = 25% | Phase 2 (Issues Fix) = 0% | Phase 3 (Valid
 - [x] Fleet endpoint `/fleet/Vehicles` validated through gateway
 - [x] Fleet maintenance endpoint `/fleet/MaintenanceRecords` validated through gateway
 - [x] Fleet fuel endpoint `/fleet/FuelRecords` validated through gateway
+- [x] Fleet driver listing endpoint `/fleet/Drivers` validated through gateway
+- [x] Fleet driver detail endpoint `/fleet/Drivers/{id}` validated through gateway
 
 ### ✅ Gateway Routing Validated
 **API Gateway (Ocelot) - Port 5000**
