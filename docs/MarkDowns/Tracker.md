@@ -4,6 +4,12 @@
 
 Last Updated: 2026-10-20
 
+### Publish AI agent and login landing updates (2026-10-20) — In Progress
+
+- [ ] Finish the AI Fleet Agent MVP publication item by pushing the implementation and project status documents to `origin/main`.
+- [x] Include the portal root-route update so signed-out visitors land directly on `/login`.
+- [x] Verify with frontend production build and AI service tests (23/23 passed); commit and publish the result.
+
 ### AI vehicle status lookup regression (2026-10-20) — Complete
 
 - [x] Fix natural-language vehicle lookup so a query such as “what is the status of Honda Unicorn” resolves the matching fleet vehicle and returns its verified status instead of a generic response.
@@ -24,7 +30,7 @@ Repository orientation: See [ProjectContextGraph.md](./ProjectContextGraph.md) f
 - [x] Frontend build/lint and permission matrix (9/9) pass; AI service tests pass (21/21).
 - [x] Live local API smoke: anonymous planning request returned 401; Dispatcher received a trip draft; Viewer received no draft and a role-denial message.
 - [x] Updated the project context graph with the agent flow and verification evidence.
-- [ ] Commit the implementation and both project status documents (excluding unrelated pre-existing tracker edits).
+- [x] Commit the implementation and both project status documents with the current status updates.
 
 ---
 

@@ -58,7 +58,7 @@ const AppContent: React.FC = () => {
       <Route path="/ai-assistant" element={isAuthenticated ? <AuthenticatedLayout><AIAssistantPage /></AuthenticatedLayout> : <Navigate to="/login" />} />
       <Route path="/profile" element={isAuthenticated ? <AuthenticatedLayout><ProfilePage /></AuthenticatedLayout> : <Navigate to="/login" />} />
       <Route path="/users" element={isAuthenticated && userCanManageUsers ? <AuthenticatedLayout><UserManagementPage /></AuthenticatedLayout> : <Navigate to={isAuthenticated ? '/dashboard' : '/login'} replace />} />
-      <Route path="/" element={<Navigate to={isAuthenticated && isDriver ? '/driver' : '/dashboard'} replace />} />
+      <Route path="/" element={<Navigate to={isAuthenticated ? (isDriver ? '/driver' : '/dashboard') : '/login'} replace />} />
     </Routes>
   );
 };

@@ -3,7 +3,7 @@
 > **Purpose:** Give an AI assistant or developer a reliable starting point for understanding the repository, its current implementation, and what is still unverified. Read this before making cross-cutting changes.
 
 **Snapshot prepared:** 2026-10-20  
-**Latest project status recorded in the repository:** 2026-10-18 in [Tracker.md](./Tracker.md)  
+**Latest project status recorded in the repository:** 2026-10-20 in [Tracker.md](./Tracker.md)
 **Status caveat:** This is a repository and documentation snapshot, not a live health check. Services and tests were not run while preparing this file.
 
 ## Project in one sentence
@@ -52,9 +52,9 @@ flowchart LR
 | Fleet operations | Authenticated APIs for vehicles, drivers, maintenance records, fuel records, dashboard stats, and trips. Vehicle-driver assignment/history and an Admin-only vehicle status/incident workflow are also present. The Fuel Dashboard shows completed-trip distance and fuel consumption separately from refueling records and spend. |
 | Trip lifecycle | APIs support scheduling, starting, completing, and cancelling trips. Tracker records lifecycle and role-policy tests; live database/event integration is not fully verified. |
 | Authorization | Fleet write operations have role policies. Roles in source include `Admin`, `SuperAdmin`, `FleetManager`, `Dispatcher`, `MaintenanceTechnician`, `SafetyOfficer`, `Viewer`, and `Driver`. Frontend gating exists for user management and some Admin actions; comprehensive UI role gating remains work in progress. |
-| AI | Authenticated chat and fleet-health endpoints; Ollama is the development default (`qwen3:0.6b`), Azure OpenAI is optional. The assistant can prepare role-aware structured drafts for trip scheduling and maintenance creation. Users review and confirm drafts in the portal, which then calls the existing Fleet API with the user's JWT; Fleet remains the final authorization and validation boundary. AI context lookup can use authenticated Fleet APIs for vehicle, maintenance, and fuel data. |
+| AI | Authenticated chat and fleet-health endpoints; Ollama is the development default (`qwen3:0.6b`), Azure OpenAI is optional. The assistant can prepare role-aware structured drafts for trips, maintenance, fuel logs, vehicle status changes, and driver assignments. Users review and confirm each draft in the portal, which calls existing Fleet APIs with the user's JWT; Fleet remains the final authorization and validation boundary. AI context lookup supports registration numbers and manufacturer/model status queries, and can include related maintenance and fuel history. |
 | Notifications | Kafka consumer and dispatcher with SMTP and Twilio sender implementations. Provider configuration is validated during service startup; real provider credentials/configuration are required for delivery. |
-| Portal | Login/register, dashboard, vehicle and driver list/detail, maintenance, fuel, AI assistant, profile, and Admin user management pages. The AI assistant supports editable trip and maintenance drafts with explicit confirmation; action controls follow the frontend role matrix. APIs are centralized in `src/api`. There is no trip-management page/route in the current portal route table. |
+| Portal | Login/register, dashboard, vehicle and driver list/detail, maintenance, fuel, AI assistant, profile, and Admin user management pages. Signed-out visits to `/` route directly to `/login`; signed-in users route to their dashboard. The AI assistant supports editable action drafts with explicit per-action confirmation; action controls follow the frontend role matrix. APIs are centralized in `src/api`. There is no trip-management page/route in the current portal route table. |
 | Local infrastructure | Docker Compose provisions SQL Server 2022, Kafka, and ZooKeeper (plus Kafka UI). `run-all.ps1` starts the infrastructure and the services/portal for local development. |
 | Automation | A scheduled/manual GitHub Actions workflow runs the PowerShell E2E smoke script against a configured target. |
 
@@ -116,12 +116,13 @@ Typical local startup is `.\run-all.ps1` from the repository root. It is a conve
 
 ## Current status and open work
 
-The newest tracker notes are dated 2026-10-18. They describe the platform as **in progress**, with an 84% headline completion estimate; that percentage is a planning estimate, not a build-derived metric.
+The tracker describes the platform as **in progress**, with an 84% headline completion estimate; that percentage is a planning estimate, not a build-derived metric.
 
 ### Latest recorded verification (not rerun for this snapshot)
 
 - On 2026-10-20, frontend build and lint passed after adding completed-trip fuel usage to the Fuel Dashboard; the frontend permission suite passed 9/9. The build retained the existing large JavaScript bundle advisory. A read-only live Fleet API check confirmed a completed trip had recorded distance and fuel consumed while its vehicle had no refueling records.
 - On 2026-10-20, the AI agent MVP passed frontend build/lint and permission tests (9/9), plus 21 AI service tests. An isolated API using local Ollama returned HTTP 401 without a token, gave a Dispatcher a trip draft, and denied a Viewer a trip draft. No create request was sent during the smoke check. Offline NuGet vulnerability metadata lookup emitted NU1900 warnings; restore used cached packages.
+- On 2026-10-20, AI vehicle status lookup was expanded to resolve manufacturer/model phrases; AI service tests passed 23/23, including Honda Unicorn and unknown-model cases. The frontend production build passed with the existing large-chunk advisory.
 - FleetService test suite: 38 tests passed after the trip module work; earlier recorded passes include 29 tests after assignment work.
 - AI service test suite: 9 tests passed for provider/configuration and fleet-context work; an earlier 5-test configuration-regression run also passed.
 - Frontend `npm.cmd run lint` and `npm.cmd run build` passed on 2026-10-18. The production build had an existing large JavaScript bundle advisory.
