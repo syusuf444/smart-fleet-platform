@@ -4,9 +4,9 @@
 
 Last Updated: 2026-10-20
 
-### Publish AI agent and login landing updates (2026-10-20) — In Progress
+### Publish AI agent and login landing updates (2026-10-20) — Complete
 
-- [ ] Finish the AI Fleet Agent MVP publication item by pushing the implementation and project status documents to `origin/main`.
+- [x] Finish the AI Fleet Agent MVP publication item by pushing the implementation and project status documents to `origin/main`.
 - [x] Include the portal root-route update so signed-out visitors land directly on `/login`.
 - [x] Verify with frontend production build and AI service tests (23/23 passed); commit and publish the result.
 
