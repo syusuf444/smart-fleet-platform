@@ -4,6 +4,12 @@
 
 Last Updated: 2026-10-20
 
+### AI vehicle status lookup regression (2026-10-20) — Complete
+
+- [x] Fix natural-language vehicle lookup so a query such as “what is the status of Honda Unicorn” resolves the matching fleet vehicle and returns its verified status instead of a generic response.
+- [x] Add regression coverage for model/manufacturer lookup and missing matches; multiple matches are returned with their verified statuses.
+- [x] Run AI service tests (23/23 passed); commit the fix with this tracker update.
+
 Project Status: In Progress
 
 Overall Completion: 84% (Frontend: 65% | Backend: 75% | Integration: 20%)

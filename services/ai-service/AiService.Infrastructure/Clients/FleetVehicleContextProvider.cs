@@ -27,7 +27,8 @@ public sealed class FleetVehicleContextProvider : IFleetVehicleContextProvider
         CancellationToken cancellationToken)
     {
         var registrationMatch = RegistrationPattern.Match(question);
-        if (!registrationMatch.Success)
+        var isVehicleStatusLookup = AsksAboutVehicleStatus(question);
+        if (!registrationMatch.Success && !isVehicleStatusLookup)
         {
             return null;
         }
@@ -38,15 +39,40 @@ public sealed class FleetVehicleContextProvider : IFleetVehicleContextProvider
                 "Sign in to look up live fleet vehicle details.");
         }
 
-        var registration = Regex.Replace(
-            registrationMatch.Value,
-            @"\s+",
-            string.Empty).ToUpperInvariant();
-
         var fleetResponse = await GetFleetDataAsync<List<FleetVehicle>>(
             "fleet/Vehicles",
             authorizationHeader,
             cancellationToken);
+
+        if (!registrationMatch.Success)
+        {
+            var normalizedQuestion = NormalizeLookupText(question);
+            var matches = fleetResponse?.Data?
+                .Where(vehicle =>
+                {
+                    var makeAndModel = NormalizeLookupText($"{vehicle.Manufacturer} {vehicle.Model}");
+                    return makeAndModel.Length > 0 && normalizedQuestion.Contains(makeAndModel, StringComparison.Ordinal);
+                })
+                .ToArray() ?? [];
+
+            if (matches.Length == 0)
+            {
+                var requestedName = ExtractVehicleName(question);
+                return string.IsNullOrWhiteSpace(requestedName)
+                    ? null
+                    : $"FleetService lookup found no vehicle matching '{requestedName}'. Tell the user no matching fleet vehicle was found; do not guess its status.";
+            }
+
+            return "Verified FleetService status for matching vehicle(s): " +
+                   string.Join("; ", matches.Select(vehicle =>
+                       $"{vehicle.Manufacturer} {vehicle.Model} ({vehicle.VehicleNumber}) is {vehicle.Status}")) +
+                   ". Answer the user's status question directly using these records.";
+        }
+
+        var registration = Regex.Replace(
+            registrationMatch.Value,
+            @"\s+",
+            string.Empty).ToUpperInvariant();
 
         var vehicle = fleetResponse?.Data?.FirstOrDefault(candidate =>
             string.Equals(
@@ -156,6 +182,26 @@ public sealed class FleetVehicleContextProvider : IFleetVehicleContextProvider
 
     private static bool AsksAboutMaintenance(string question) =>
         ContainsAny(question, "maintenance", "service history", "service record", "repair", "inspection");
+
+    private static bool AsksAboutVehicleStatus(string question) =>
+        Regex.IsMatch(question, @"\b(status|state)\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
+    private static string NormalizeLookupText(string value) =>
+        Regex.Replace(value, @"[^a-zA-Z0-9]+", " ").Trim().ToLowerInvariant();
+
+    private static string ExtractVehicleName(string question)
+    {
+        var match = Regex.Match(question,
+            @"\b(?:of|for)\s+(?:the\s+)?(.+?)(?:[?.!,]|$)",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+        if (!match.Success)
+        {
+            return string.Empty;
+        }
+
+        var name = Regex.Replace(match.Groups[1].Value, @"\b(vehicle|status|state)\b", "", RegexOptions.IgnoreCase).Trim();
+        return Regex.Replace(name, @"\s+", " ");
+    }
 
     private static bool AsksAboutFuelRecords(string question) =>
         ContainsAny(question, "fuel history", "fuel record", "fuel usage", "fuel consumption", "fuel spend", "fuel cost", "refuel", "refill") ||

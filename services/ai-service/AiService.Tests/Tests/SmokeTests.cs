@@ -129,7 +129,7 @@ namespace AiService.Tests
         {
             var handler = new StubMessageHandler
             {
-                ResponseContent = "{\"choices\":[{\"message\":{\"content\":\"{\\\"action\\\":\\\"scheduleTrip\\\",\\\"assistantMessage\\\":\\\"Review this trip draft.\\\",\\\"trip\\\":{\\\"vehicleNumber\\\":\\\"MH01AB1005\\\",\\\"driverEmail\\\":\\\"driver@example.test\\\",\\\"source\\\":\\\"Pune\\\",\\\"destination\\\":\\\"Mumbai\\\",\\\"startDate\\\":\\\"2026-11-01T09:00:00Z\\\",\\\"endDate\\\":\\\"2026-11-01T13:00:00Z\\\"},\\\"maintenance\\\":null}\"}}]}"
+                ResponseContent = "{\"choices\":[{\"message\":{\"content\":\"{\\\"assistantMessage\\\":\\\"Review this trip draft.\\\",\\\"reasoning\\\":\\\"The user supplied trip details.\\\",\\\"actions\\\":[{\\\"action\\\":\\\"scheduleTrip\\\",\\\"trip\\\":{\\\"vehicleNumber\\\":\\\"MH01AB1005\\\",\\\"driverEmail\\\":\\\"driver@example.test\\\",\\\"source\\\":\\\"Pune\\\",\\\"destination\\\":\\\"Mumbai\\\",\\\"startDate\\\":\\\"2026-11-01T09:00:00Z\\\",\\\"endDate\\\":\\\"2026-11-01T13:00:00Z\\\"}}]}\"}}]}"
             };
             using var httpClient = new HttpClient(handler);
             var service = new AzureOpenAiAssistantService(
@@ -147,10 +147,10 @@ namespace AiService.Tests
                 ["scheduleTrip"],
                 CancellationToken.None);
 
-            Assert.Equal("scheduleTrip", plan.Action);
-            Assert.Equal("MH01AB1005", plan.Trip?.VehicleNumber);
-            Assert.Equal("driver@example.test", plan.Trip?.DriverEmail);
-            Assert.Null(plan.Maintenance);
+            Assert.Equal("scheduleTrip", plan.Actions[0].Action);
+            Assert.Equal("MH01AB1005", plan.Actions[0].Trip?.VehicleNumber);
+            Assert.Equal("driver@example.test", plan.Actions[0].Trip?.DriverEmail);
+            Assert.Null(plan.Actions[0].Maintenance);
             Assert.Contains("Permitted actions", handler.RequestBody);
         }
 
@@ -177,8 +177,7 @@ namespace AiService.Tests
                 ["createMaintenance"],
                 CancellationToken.None);
 
-            Assert.Equal("none", plan.Action);
-            Assert.Null(plan.Trip);
+            Assert.Empty(plan.Actions);
             Assert.Contains("isn't allowed", plan.AssistantMessage);
         }
 
@@ -187,7 +186,7 @@ namespace AiService.Tests
         {
             var handler = new StubMessageHandler
             {
-                ResponseContent = "{\"choices\":[{\"message\":{\"content\":\"{\\\"action\\\":\\\"none\\\",\\\"assistantMessage\\\":\\\"Please review.\\\",\\\"trip\\\":null,\\\"maintenance\\\":null}\"}}]}"
+                ResponseContent = "{\"choices\":[{\"message\":{\"content\":\"{\\\"assistantMessage\\\":\\\"Please review.\\\",\\\"reasoning\\\":\\\"Trip requested.\\\",\\\"actions\\\":[]}\"}}]}"
             };
             using var httpClient = new HttpClient(handler);
             var service = new AzureOpenAiAssistantService(
@@ -205,8 +204,8 @@ namespace AiService.Tests
                 ["scheduleTrip"],
                 CancellationToken.None);
 
-            Assert.Equal("scheduleTrip", plan.Action);
-            Assert.NotNull(plan.Trip);
+            Assert.Equal("scheduleTrip", plan.Actions[0].Action);
+            Assert.NotNull(plan.Actions[0].Trip);
             Assert.Equal("Please review.", plan.AssistantMessage);
         }
 
@@ -307,6 +306,45 @@ namespace AiService.Tests
         }
 
         [Fact]
+        public async Task FleetVehicleContextProvider_ResolvesVehicleStatusByManufacturerAndModel()
+        {
+            var handler = new StubFleetDataHandler();
+            using var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("http://localhost:5000/")
+            };
+            var provider = new FleetVehicleContextProvider(httpClient);
+
+            var context = await provider.GetVehicleContextAsync(
+                "What is the status of Honda Unicorn?",
+                "Bearer test-token",
+                CancellationToken.None);
+
+            Assert.Contains("Honda Unicorn (MH01AB1007) is InMaintenance", context);
+            Assert.Contains("/fleet/Vehicles", handler.RequestPaths);
+            Assert.Single(handler.RequestPaths);
+        }
+
+        [Fact]
+        public async Task FleetVehicleContextProvider_ReportsUnknownModelWithoutGuessingStatus()
+        {
+            var handler = new StubFleetDataHandler();
+            using var httpClient = new HttpClient(handler)
+            {
+                BaseAddress = new Uri("http://localhost:5000/")
+            };
+            var provider = new FleetVehicleContextProvider(httpClient);
+
+            var context = await provider.GetVehicleContextAsync(
+                "What is the status of Honda CBR?",
+                "Bearer test-token",
+                CancellationToken.None);
+
+            Assert.Contains("no vehicle matching 'Honda CBR'", context);
+            Assert.DoesNotContain("is Active", context);
+        }
+
+        [Fact]
         public async Task FleetVehicleContextProvider_DoesNotGuess_WhenRegistrationIsUnknown()
         {
             var handler = new StubFleetDataHandler();
@@ -377,7 +415,9 @@ namespace AiService.Tests
                 {
                     "/fleet/Vehicles" => "{\"success\":true,\"data\":[{" +
                         "\"id\":\"vehicle-1\",\"vehicleNumber\":\"MH01AB1005\",\"manufacturer\":\"Tata\",\"model\":\"Signa\",\"year\":2018,\"fuelCapacity\":350,\"status\":\"Active\"},{" +
-                        "\"id\":\"vehicle-2\",\"vehicleNumber\":\"MH01AB1006\",\"manufacturer\":\"Volvo\",\"model\":\"FMX\",\"year\":2022,\"fuelCapacity\":400,\"status\":\"Active\"}]}",
+                        "\"id\":\"vehicle-2\",\"vehicleNumber\":\"MH01AB1006\",\"manufacturer\":\"Volvo\",\"model\":\"FMX\",\"year\":2022,\"fuelCapacity\":400,\"status\":\"Active\"},{" +
+                        "\"id\":\"vehicle-3\",\"vehicleNumber\":\"MH01AB1007\",\"manufacturer\":\"Honda\",\"model\":\"Unicorn\",\"year\":2021,\"fuelCapacity\":13," +
+                        "\"status\":\"InMaintenance\"}]}",
                     "/fleet/MaintenanceRecords" => "{\"success\":true,\"data\":[{" +
                         "\"vehicleId\":\"vehicle-1\",\"serviceType\":\"Brake Inspection\",\"description\":\"Brake pads replaced\",\"scheduledDate\":\"2026-08-12T00:00:00Z\",\"completedDate\":\"2026-08-12T00:00:00Z\",\"cost\":1400,\"vendor\":\"FleetWorks\",\"status\":\"Completed\",\"isDeleted\":false},{" +
                         "\"vehicleId\":\"vehicle-2\",\"serviceType\":\"Oil Change\",\"description\":\"Other vehicle private record\",\"scheduledDate\":\"2026-08-12T00:00:00Z\",\"cost\":900,\"vendor\":\"FleetWorks\",\"status\":\"Completed\",\"isDeleted\":false}]}",
